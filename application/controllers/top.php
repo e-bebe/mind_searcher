@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-# hoge
+# hogehage
 class Top extends CI_Controller {
 
     public function index()
