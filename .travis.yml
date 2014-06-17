@@ -4,9 +4,5 @@ php:
     - 5.4
     - hhvm
       
-before_script:
-    - php /composer.phar self-update
-    - php /composer.phar install
-
 script:
     echo 'hello world.'
