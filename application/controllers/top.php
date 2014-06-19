@@ -10,4 +10,11 @@ class Top extends CI_Controller {
         $this->load->view('top/index');
     }
 
+    public function d3_test()
+    {
+        $data = array();
+
+        $this->load->view('top/d3_test');
+    }
+
 }
