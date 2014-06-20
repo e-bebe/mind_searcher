@@ -17,6 +17,13 @@ class Top extends CI_Controller {
         $this->load->view('top/d3_test');
     }
 
+    public function d3_test2()
+    {
+        $data = array();
+
+        $this->load->view('top/d3_test2');
+    }
+    
     public function ajax_test()
     {
         $data = array();
