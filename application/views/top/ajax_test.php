@@ -70,11 +70,15 @@
                         })
                         .on("click", function(){
                             console.log("click done!");
-                        
+                            d3.select(this)
+                                .attr("cx", 50)
+                                .attr("cy", 50);
+                        })
+                        .on("mousedown", function(){
+                            console.log("mousemove!");
                         });
        
     };
-
 </script>
 
 
