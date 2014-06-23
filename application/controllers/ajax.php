@@ -10,11 +10,18 @@ class Ajax extends CI_Controller {
 
     public function index()
     {
-        $data = $this->input->post('number');
+        // keywordを受け取る
+        $keyword = $this->input->post('keyword');
+
+// @todo debug
+$keyword = 'IT';
+    
+        // keywordで検索
+
 
         $this->output
             ->set_content_type('application/json')
-            ->set_output(json_encode($data));
+            ->set_output(json_encode($keyword));
     }
 
 

@@ -1,105 +1,116 @@
+<base href="<?= base_url(); ?>">
+
 <style>
 
-.axis {
-  font: 10px sans-serif;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  user-select: none;
-}
 
-.axis .domain {
-  fill: none;
-  stroke: #000;
-  stroke-opacity: .3;
-  stroke-width: 10px;
-  stroke-linecap: round;
-}
-
-.axis .halo {
-  fill: none;
-  stroke: #ddd;
-  stroke-width: 8px;
-  stroke-linecap: round;
-}
-
-.slider .handle {
-  fill: #fff;
-  stroke: #000;
-  stroke-opacity: .5;
-  stroke-width: 1.25px;
-  pointer-events: none;
-}
 
 </style>
+
 <body>
+
+
+
+
+
+<script type="text/javascript" src="js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript" src="js/jquery-ui.min.js"></script>
 <script src="http://d3js.org/d3.v3.min.js"></script>
+
 <script>
+    // init
+    var list = {
+        nodes : [
+            { name : "aaaaaaa" },
+            { name : "b" },
+        ],
+        links : [
+            { source : 0, target : 1 },
+        ]
+    };
 
-var margin = {top: 200, right: 50, bottom: 200, left: 50},
-    width = 960 - margin.left - margin.right,
-    height = 500 - margin.bottom - margin.top;
+    var w = 500;
+    var h = 500;
 
-var x = d3.scale.linear()
-    .domain([0, 180])
-    .range([0, width])
-    .clamp(true);
+    var svg = d3.select("body").append("svg")
+        .attr("width", w).attr("height", h);
 
-var brush = d3.svg.brush()
-    .x(x)
-    .extent([0, 0])
-    .on("brush", brushed);
+    var force = d3.layout.force()
+        .nodes(list.nodes)
+        .links(list.links)
+        .charge(-500)
+        .gravity(0.1)
+        .size([w, h])
+        .linkDistance(100)
+        .on("tick", tick)
 
-var svg = d3.select("body").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    var link      = svg.selectAll("line").data(list.links);
+    var node      = svg.selectAll("circle").data(list.nodes);
+    var label     = svg.selectAll("text").data(list.nodes);
+    restart();
 
-svg.append("g")
-    .attr("class", "x axis")
-    .attr("transform", "translate(0," + height / 2 + ")")
-    .call(d3.svg.axis()
-      .scale(x)
-      .orient("bottom")
-      .tickFormat(function(d) { return d + "°"; })
-      .tickSize(0)
-      .tickPadding(12))
-  .select(".domain")
-  .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
-    .attr("class", "halo");
+    // animation
+    function tick() {
+        link
+            .attr("x1", function(d){ return d.source.x; })
+            .attr("y1", function(d){ return d.source.y; })
+            .attr("x2", function(d){ return d.target.x; })
+            .attr("y2", function(d){ return d.target.y; });
+        node
+            .attr("cx", function(d){ return d.x })
+            .attr("cy", function(d){ return d.y });
+        label
+            .attr("x", function(d){ return d.x })
+            .attr("y", function(d){ return d.y });
 
-var slider = svg.append("g")
-    .attr("class", "slider")
-    .call(brush);
+    }
 
-slider.selectAll(".extent,.resize")
-    .remove();
+    // restart
+    function restart() {
+        // update link
+        link = link.data(list.links);
+        link.enter().append("line")
+        .style("stroke", "red")
+        .style("stroke-width", 1);
 
-slider.select(".background")
-    .attr("height", height);
+        // update node
+        node = node.data(list.nodes);
+        node.enter().append("circle")
+        .attr("r", 10)
+        .on("mousedown", function(d){
+            var keyword = d.name;
 
-var handle = slider.append("circle")
-    .attr("class", "handle")
-    .attr("transform", "translate(0," + height / 2 + ")")
-    .attr("r", 9);
+            $.ajax({
+                type: "POST",
+                url: "<?= base_url(); ?>ajax",
+                data: {keyword: keyword},
+                dataType: "json",
 
-slider
-    .call(brush.event)
-  .transition() // gratuitous intro!
-    .duration(750)
-    .call(brush.extent([70, 70]))
-    .call(brush.event);
+                success: function(data){
+                    console.log(data);
+                }
+            });
 
-function brushed() {
-  var value = brush.extent()[0];
+            pushElement(d.index);
+            restart();
+        })
+        .call(force.drag);
 
-  if (d3.event.sourceEvent) { // not a programmatic event
-    value = x.invert(d3.mouse(this)[0]);
-    brush.extent([value, value]);
-  }
+        // text
+        label = label.data(list.nodes);
+        label.enter().append("text")
+            .attr("font-family", "sans-serif")
+            .attr("fill", "green")
+            .attr("font-weight", "bold")
+            .text(function(d) { return d.name; })
+            .call(force.drag);
+        force.start();
+    }
 
-  handle.attr("cx", x(value));
-  d3.select("body").style("background-color", d3.hsl(value, .8, .8));
-}
+    function pushElement(index) {
+        list.links.push( {source : index, target: list.nodes.length} );
+        list.nodes.push( {name : "c"} );
+    }
 
 </script>
+
+</body>

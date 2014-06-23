@@ -1,6 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-# hogehage
 class Top extends CI_Controller {
 
     public function index()
@@ -10,6 +9,7 @@ class Top extends CI_Controller {
         $this->load->view('top/index');
     }
 
+    // test
     public function d3_test()
     {
         $data = array();
