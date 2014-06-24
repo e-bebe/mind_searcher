@@ -2,9 +2,8 @@
 
 <style>
 
-
-
 </style>
+
 <body>
 
 <script type="text/javascript" src="js/jquery-2.1.0.min.js"></script>
@@ -15,14 +14,19 @@
     // init
     var list = {
         nodes : [
-            { name : "<?= $trgt ?>", flag : 0},
+            { name : "<?= $trgt ?>", flg : 0 },
         ],
         links : [
         ]
     };
 
-    var w = 500;
-    var h = 500;
+    // svg
+    var w = 1000;
+    var h = 1000;
+
+    var circle_r = 7;
+    var font_size = 10;
+    var label_dist = 7;
 
     var svg = d3.select("body").append("svg")
         .attr("width", w).attr("height", h);
@@ -39,6 +43,7 @@
     var link      = svg.selectAll("line").data(list.links);
     var node      = svg.selectAll("circle").data(list.nodes);
     var label     = svg.selectAll("text").data(list.nodes);
+
     restart();
 
     // animation
@@ -52,8 +57,8 @@
             .attr("cx", function(d){ return d.x })
             .attr("cy", function(d){ return d.y });
         label
-            .attr("x", function(d){ return d.x + 7 })
-            .attr("y", function(d){ return d.y - 7 });
+            .attr("x", function(d){ return d.x + label_dist })
+            .attr("y", function(d){ return d.y - label_dist });
     }
 
     // restart
@@ -67,7 +72,7 @@
         // update node
         node = node.data(list.nodes);
         node.enter().append("circle")
-        .attr("r", 7)
+        .attr("r", circle_r)
         .on("mousedown", function(d){
             var keyword = d.name;
 
@@ -78,12 +83,17 @@
                 dataType: "json",
 
                 success: function(results){
-                    pushSearchResults(d.index, results)
+
+                    if (d.flg == 1) return false;
+
+                    // update pushed node -> to flg = 1
+                    d.flg = 1;
+                    d.fixed = true;
+
+                    pushSearchResults(d, results)
                     restart();
                 }
             });
-
-            restart();
         })
         .call(force.drag);
 
@@ -92,16 +102,16 @@
         label.enter().append("text")
             .attr("font-family", "sans-serif")
             .attr("fill", "green")
-            .attr("font-size", "10px")
+            .attr("font-size", font_size + "px")
             .text(function(d) { return d.name; })
             .call(force.drag);
         force.start();
     }
 
-    function pushSearchResults(index, results) {
+    function pushSearchResults(d, results) {
         for (var i = 0; i < results.length; i++) {
-            list.links.push( {source : index, target: list.nodes.length} );
-            list.nodes.push( {name : results[i]} );
+            list.links.push( {source : d.index, target: list.nodes.length} );
+            list.nodes.push( {name : results[i], flg : 0} );
         }
     }
 
