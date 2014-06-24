@@ -9,6 +9,17 @@ class Top extends CI_Controller {
         $this->load->view('top/index');
     }
 
+    public function search()
+    {
+        $trgt = $this->input->post('trgt');
+
+        // 
+        if (!$trgt) redirect('top/index');
+
+        $data['trgt'] = $trgt;
+        $this->load->view('top/search', $data);
+    }
+
     // test
     public function d3_test()
     {
