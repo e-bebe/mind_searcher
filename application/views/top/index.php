@@ -5,12 +5,7 @@
 
 
 </style>
-
 <body>
-
-
-
-
 
 <script type="text/javascript" src="js/jquery-2.1.0.min.js"></script>
 <script type="text/javascript" src="js/jquery-ui.min.js"></script>
@@ -20,11 +15,9 @@
     // init
     var list = {
         nodes : [
-            { name : "aaaaaaa" },
-            { name : "b" },
+            { name : "world cup" },
         ],
         links : [
-            { source : 0, target : 1 },
         ]
     };
 
@@ -40,7 +33,7 @@
         .charge(-500)
         .gravity(0.1)
         .size([w, h])
-        .linkDistance(100)
+        .linkDistance(70)
         .on("tick", tick)
 
     var link      = svg.selectAll("line").data(list.links);
@@ -85,12 +78,13 @@
                 data: {keyword: keyword},
                 dataType: "json",
 
-                success: function(data){
-                    console.log(data);
+                success: function(results){
+
+                    pushSearchResults(d.index, results)
+                    restart();
                 }
             });
 
-            pushElement(d.index);
             restart();
         })
         .call(force.drag);
@@ -106,9 +100,11 @@
         force.start();
     }
 
-    function pushElement(index) {
-        list.links.push( {source : index, target: list.nodes.length} );
-        list.nodes.push( {name : "c"} );
+    function pushSearchResults(index, results) {
+        for (var i = 0; i < results.length; i++) {
+            list.links.push( {source : index, target: list.nodes.length} );
+            list.nodes.push( {name : results[i]} );
+        }
     }
 
 </script>
