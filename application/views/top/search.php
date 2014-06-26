@@ -84,10 +84,7 @@
                 dataType: "json",
 
                 success: function(results){
-
                     if (d.flg == 1) return false;
-
-
                     pushSearchResults(d, results)
                     restart();
                 }
@@ -117,9 +114,22 @@
             if (d.flg == 1) return "red";
         });
 
+        var chk_nodes = new Object();
+
+        // make check nodes.
+        for (var i = 0; i < list.nodes.length; i++) {
+            chk_nodes[list.nodes[i].name] = list.nodes[i].index;
+        }
+
         for (var i = 0; i < results.length; i++) {
-            list.links.push( {source : d.index, target: list.nodes.length} );
-            list.nodes.push( {name : results[i], flg : 0} );
+            // node exists -> only push links.
+            if (chk_nodes[results[i]] !== undefined) {
+                list.links.push( {source : d.index, target: chk_nodes[results[i]]} );
+            } else {
+                // else push node and links
+                list.links.push( {source : d.index, target: list.nodes.length} );
+                list.nodes.push( {name : results[i], flg : 0} );
+            }
         }
     }
 
