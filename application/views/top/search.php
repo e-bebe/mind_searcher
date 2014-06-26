@@ -59,6 +59,7 @@
         label
             .attr("x", function(d){ return d.x + label_dist })
             .attr("y", function(d){ return d.y - label_dist });
+
     }
 
     // restart
@@ -86,9 +87,6 @@
 
                     if (d.flg == 1) return false;
 
-                    // update pushed node -> to flg = 1
-                    d.flg = 1;
-                    d.fixed = true;
 
                     pushSearchResults(d, results)
                     restart();
@@ -109,6 +107,16 @@
     }
 
     function pushSearchResults(d, results) {
+
+        // update pushed node -> to flg = 1
+        d.flg = 1;
+        d.fixed = true;
+
+        // push then turn into red.
+        node.attr("fill", function(d) { 
+            if (d.flg == 1) return "red";
+        });
+
         for (var i = 0; i < results.length; i++) {
             list.links.push( {source : d.index, target: list.nodes.length} );
             list.nodes.push( {name : results[i], flg : 0} );
