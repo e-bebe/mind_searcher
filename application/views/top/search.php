@@ -2,6 +2,24 @@
 
 <style>
 
+svg line {
+    stroke: red;
+    stroke-width: 1;
+}
+
+svg text.init {
+    font-family: sans-serif;
+    fill: green;
+    font-size: 10px;
+    font-weight: normal;
+}
+
+svg circle.init {
+    fill: white;
+    stroke: gray;
+    stroke-width: 2;
+}
+
 </style>
 
 <body>
@@ -14,7 +32,7 @@
     // init
     var list = {
         nodes : [
-            { name : "<?= $trgt ?>", flg : 0 },
+            { name : "<?= $trgt ?>" },
         ],
         links : [
         ]
@@ -25,7 +43,6 @@
     var h = 1000;
 
     var circle_r = 7;
-    var font_size = 10;
     var label_dist = 7;
 
     var svg = d3.select("body").append("svg")
@@ -59,23 +76,30 @@
         label
             .attr("x", function(d){ return d.x + label_dist })
             .attr("y", function(d){ return d.y - label_dist });
-
     }
 
     // restart
     function restart() {
         // update link
         link = link.data(list.links);
-        link.enter().append("line")
-        .style("stroke", "red")
-        .style("stroke-width", 1);
+        link.enter().append("line");
 
         // update node
         node = node.data(list.nodes);
         node.enter().append("circle")
-        .attr("r", circle_r)
-        .on("mousedown", function(d){
+        .attr("r", 7)
+        .classed("init", true)
+        .on("click", function(d){
             var keyword = d.name;
+            d3.select(this)
+                .classed("init", false)
+                .transition()
+                .duration(100)
+                .attr("r", 9)
+                .transition()
+                .duration(200)
+                .attr("r", 8)
+                .attr("fill", "red");
 
             $.ajax({
                 type: "POST",
@@ -84,7 +108,7 @@
                 dataType: "json",
 
                 success: function(results){
-                    if (d.flg == 1) return false;
+                    if (d.fixed == true) return false;
                     pushSearchResults(d, results)
                     restart();
                 }
@@ -95,25 +119,27 @@
         // text
         label = label.data(list.nodes);
         label.enter().append("text")
-            .attr("font-family", "sans-serif")
-            .attr("fill", "green")
-            .attr("font-size", font_size + "px")
             .text(function(d) { return d.name; })
+            .classed("init", true)
+            .on("mouseover", function(d){
+                d3.select(this)
+                    .classed("init", false)
+                    .attr("fill", "black") 
+                    .attr("font-weight", "bold") 
+                    .attr("font-size", "13px");
+            })
+            .on("mouseout", function(d){
+                d3.select(this)
+                    .classed("init", true);
+            })
             .call(force.drag);
         force.start();
     }
 
     function pushSearchResults(d, results) {
 
-        // update pushed node -> to flg = 1
-        d.flg = 1;
         d.fixed = true;
-
         // push then turn into red.
-        node.attr("fill", function(d) { 
-            if (d.flg == 1) return "red";
-        });
-
         var chk_nodes = new Object();
 
         // make check nodes.
@@ -128,7 +154,7 @@
             } else {
                 // else push node and links
                 list.links.push( {source : d.index, target: list.nodes.length} );
-                list.nodes.push( {name : results[i], flg : 0} );
+                list.nodes.push( {name : results[i]} );
             }
         }
     }
