@@ -3,7 +3,7 @@
 <style>
 
 svg line {
-    stroke: pink;
+    stroke: blue;
     stroke-width: 1;
 }
 
@@ -21,9 +21,22 @@ svg circle.init {
     stroke-width: 2;
 }
 
+body {
+    text-align: center;
+    width: 100%;
+}
+
+div.set_center {
+    text-align: center;
+    margin: 0 auto;
+}
+
+
 </style>
 
 <body>
+
+<div class="set_center"></div>
 
 <script type="text/javascript" src="js/jquery-2.1.0.min.js"></script>
 <script type="text/javascript" src="js/jquery-ui.min.js"></script>
@@ -40,13 +53,13 @@ svg circle.init {
     };
 
     // svg
-    var w = 1000;
-    var h = 1000;
+    var w = 900;
+    var h = 600;
 
     var circle_r = 7;
     var label_dist = 7;
 
-    var svg = d3.select("body").append("svg")
+    var svg = d3.select("div").append("svg")
         .attr("width", w).attr("height", h);
 
     var force = d3.layout.force()
@@ -55,7 +68,7 @@ svg circle.init {
         .charge(-500)
         .gravity(0.1)
         .size([w, h])
-        .linkDistance(70)
+        .linkDistance(60)
         .on("tick", tick)
 
     var link      = svg.selectAll("line").data(list.links);
@@ -100,9 +113,9 @@ svg circle.init {
                 .transition()
                 .duration(200)
                 .attr("r", 8)
-                .attr("stroke", "red")
+                .attr("stroke", "purple")
                 .attr("stroke-width", 2)
-                .attr("fill", "pink");
+                .attr("fill", "blue");
 
             $.ajax({
                 type: "POST",
@@ -146,7 +159,6 @@ svg circle.init {
     function pushSearchResults(d, results) {
 
         d.fixed = true;
-        // push then turn into red.
         var chk_nodes = new Object();
 
         // make check nodes.
