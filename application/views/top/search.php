@@ -3,7 +3,7 @@
 <style>
 
 svg line {
-    stroke: red;
+    stroke: pink;
     stroke-width: 1;
 }
 
@@ -15,6 +15,7 @@ svg text.init {
 }
 
 svg circle.init {
+    cursor: pointer;
     fill: white;
     stroke: gray;
     stroke-width: 2;
@@ -99,7 +100,9 @@ svg circle.init {
                 .transition()
                 .duration(200)
                 .attr("r", 8)
-                .attr("fill", "red");
+                .attr("stroke", "red")
+                .attr("stroke-width", 2)
+                .attr("fill", "pink");
 
             $.ajax({
                 type: "POST",
@@ -124,6 +127,7 @@ svg circle.init {
             .on("mouseover", function(d){
                 d3.select(this)
                     .classed("init", false)
+                    .attr("cursor", "default") 
                     .attr("fill", "black") 
                     .attr("font-weight", "bold") 
                     .attr("font-size", "13px");
@@ -131,6 +135,9 @@ svg circle.init {
             .on("mouseout", function(d){
                 d3.select(this)
                     .classed("init", true);
+            })
+            .on("click", function(d){
+                window.open("https://www.google.co.jp/search?q=" + d.name);
             })
             .call(force.drag);
         force.start();
@@ -147,6 +154,7 @@ svg circle.init {
             chk_nodes[list.nodes[i].name] = list.nodes[i].index;
         }
 
+        // update nodes
         for (var i = 0; i < results.length; i++) {
             // node exists -> only push links.
             if (chk_nodes[results[i]] !== undefined) {
