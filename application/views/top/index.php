@@ -30,7 +30,7 @@ form {
 
     <h3>google関連キーワード検索</h3>
 
-    <p class="text-info">図形をクリックすると、さらに検索結果を表示します。</p>
+    <p class="text-info">○をクリックすると、さらに検索します。</p>
     <p class="text-info">textをクリックすると、検索結果ページを表示します。</p>
 
     <form  method="POST" action="top/search">

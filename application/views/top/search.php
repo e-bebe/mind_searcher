@@ -9,7 +9,7 @@ svg line {
 
 svg text.init {
     font-family: sans-serif;
-    fill: green;
+/*    fill: green;  */
     font-size: 10px;
     font-weight: normal;
 }
@@ -75,6 +75,8 @@ div.set_center {
     var node      = svg.selectAll("circle").data(list.nodes);
     var label     = svg.selectAll("text").data(list.nodes);
 
+    var color = d3.scale.category10();  // 20色を指定
+
     restart();
 
     // animation
@@ -137,11 +139,14 @@ div.set_center {
         label.enter().append("text")
             .text(function(d) { return d.name; })
             .classed("init", true)
+            .style("fill", function(d, i){
+                return color(i);
+            })
             .on("mouseover", function(d){
                 d3.select(this)
                     .classed("init", false)
                     .attr("cursor", "default") 
-                    .attr("fill", "black") 
+//                    .attr("fill", "black") 
                     .attr("font-weight", "bold") 
                     .attr("font-size", "13px");
             })
