@@ -9,7 +9,6 @@ svg line {
 
 svg text.init {
     font-family: sans-serif;
-/*    fill: green;  */
     font-size: 10px;
     font-weight: normal;
 }
@@ -53,15 +52,15 @@ div.set_center {
     };
 
     // svg
-    var w = 900;
-    var h = 600;
+    var w = window.innerWidth;
+    var h = window.innerHeight;
 
     var circle_r = 7;
     var label_dist = 7;
 
     var svg = d3.select("div").append("svg")
         .attr("width", w).attr("height", h);
-
+    
     var force = d3.layout.force()
         .nodes(list.nodes)
         .links(list.links)
@@ -146,7 +145,6 @@ div.set_center {
                 d3.select(this)
                     .classed("init", false)
                     .attr("cursor", "default") 
-//                    .attr("fill", "black") 
                     .attr("font-weight", "bold") 
                     .attr("font-size", "13px");
             })
