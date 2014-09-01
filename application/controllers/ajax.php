@@ -29,8 +29,11 @@ class Ajax extends CI_Controller {
         if (!$elements) return 1;
 
         foreach ($elements as $e) {
-            if ($e->getAttribute('class') != "msrl") continue;
-            $data[] = $e->nodeValue;
+            // search option
+            if (!is_null($e->previousSibling)) {
+               continue; 
+            }
+            $data[] = $e->textContent;
         }
 
         $this->output
