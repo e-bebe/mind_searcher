@@ -9,7 +9,6 @@ svg line {
 
 svg text.init {
     font-family: sans-serif;
-    font-size: 10px;
     font-weight: normal;
 }
 
@@ -34,6 +33,18 @@ div.set_center {
 </style>
 
 <body>
+
+<select id="font_size">
+    <option value="10">10</option>
+    <option value="15">15</option>
+    <option value="20">20</option>
+    <option value="25">25</option>
+    <option value="30">30</option>
+    <option value="35">35</option>
+    <option value="40">40</option>
+</select>
+
+<button onclick=changeFontSize()>fontサイズ変更</button>
 
 <div class="set_center"></div>
 
@@ -138,6 +149,9 @@ div.set_center {
         label.enter().append("text")
             .text(function(d) { return d.name; })
             .classed("init", true)
+            .attr("font-size", function(d){
+                return $("#font_size").val() + "px";  
+            })
             .style("fill", function(d, i){
                 return color(i);
             })
@@ -146,11 +160,16 @@ div.set_center {
                     .classed("init", false)
                     .attr("cursor", "default") 
                     .attr("font-weight", "bold") 
-                    .attr("font-size", "13px");
+                    .attr("font-size", function(d){
+                        return Number($("#font_size").val()) + 2 + "px";
+                    });
             })
             .on("mouseout", function(d){
                 d3.select(this)
-                    .classed("init", true);
+                    .classed("init", true)
+                    .attr("font-size", function(d){
+                        return $("#font_size").val() + "px";
+                    });
             })
             .on("click", function(d){
                 window.open("https://www.google.co.jp/search?q=" + d.name);
@@ -182,6 +201,14 @@ div.set_center {
         }
     }
 
+    function changeFontSize() {
+        label.data(list.nodes)
+            .transition()
+            .duration(200)
+            .attr("font-size", function(d){
+                return $("#font_size").val() + "px";  
+            });
+    }
 </script>
 
 </body>
