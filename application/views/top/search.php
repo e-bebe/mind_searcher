@@ -34,6 +34,7 @@ div.set_center {
 
 <body>
 
+<p>フォントサイズ
 <select id="font_size">
     <option value="10">10</option>
     <option value="15">15</option>
@@ -43,8 +44,20 @@ div.set_center {
     <option value="35">35</option>
     <option value="40">40</option>
 </select>
+px | 円のサイズ
+<select id="circle_size">
+    <option value="7">7</option>
+    <option value="8">8</option>
+    <option value="9">9</option>
+    <option value="10">10</option>
+    <option value="11">11</option>
+    <option value="12">12</option>
+    <option value="13">13</option>
+</select>
+px
+</p>
 
-<button onclick=changeFontSize()>fontサイズ変更</button>
+<button onclick=changeSize()>全てのサイズ変更</button>
 
 <div class="set_center"></div>
 
@@ -66,7 +79,6 @@ div.set_center {
     var w = window.innerWidth;
     var h = window.innerHeight;
 
-    var circle_r = 7;
     var label_dist = 7;
 
     var svg = d3.select("div").append("svg")
@@ -78,8 +90,8 @@ div.set_center {
         .charge(-500)
         .gravity(0.1)
         .size([w, h])
-        .linkDistance(60)
-        .on("tick", tick)
+        .linkDistance(80)
+        .on("tick", tick);
 
     var link      = svg.selectAll("line").data(list.links);
     var node      = svg.selectAll("circle").data(list.nodes);
@@ -113,7 +125,9 @@ div.set_center {
         // update node
         node = node.data(list.nodes);
         node.enter().append("circle")
-        .attr("r", 7)
+            .attr("r", function(d){
+                return $("#circle_size").val() + "px";
+            })
         .classed("init", true)
         .on("click", function(d){
             var keyword = d.name;
@@ -121,10 +135,14 @@ div.set_center {
                 .classed("init", false)
                 .transition()
                 .duration(100)
-                .attr("r", 9)
+                .attr("r", function(d){
+                    return Number($("#circle_size").val()) + 2 + "px";
+                })
                 .transition()
                 .duration(200)
-                .attr("r", 8)
+                .attr("r", function(d){
+                    return $("#circle_size").val() + "px";
+                })
                 .attr("stroke", "purple")
                 .attr("stroke-width", 2)
                 .attr("fill", "blue");
@@ -201,7 +219,13 @@ div.set_center {
         }
     }
 
-    function changeFontSize() {
+    function changeSize() {
+        node.data(list.nodes)
+            .transition()
+            .duration(200)
+            .attr("r", function(d){
+                return $("#circle_size").val() + "px";
+            });
         label.data(list.nodes)
             .transition()
             .duration(200)
