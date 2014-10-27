@@ -2,10 +2,10 @@
 
 class Ajax extends CI_Controller {
 
-    public function index()
+    public function related()
     {
         $keyword = $this->input->post('keyword');
-        $data = array();
+        $data = [];
 
         if ($keyword === false) return 1;
 

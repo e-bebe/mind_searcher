@@ -149,7 +149,7 @@ px
 
             $.ajax({
                 type: "POST",
-                url: "<?= base_url(); ?>ajax",
+                url: "<?= base_url(); ?>ajax/related",
                 data: {keyword: keyword},
                 dataType: "json",
 
