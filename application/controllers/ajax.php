@@ -81,30 +81,25 @@ class Ajax extends CI_Controller {
         }
         if (!$first) return 1; 
 
-        // $data = array_unique(mecab_split($first));
-        //
+        // mecab
+        /*
         foreach (array_unique(mecab_split($first)) as $value) {
             $data[] = $value;
         }
+         */
+        $mecab = new Mecab_Tagger();
+        for($node=$mecab->parseToNode($first); $node; $node=$node->getNext()){
+            if($node->getStat() != 2 && $node->getStat() != 3){
+                // if (preg_match('/名詞/', $node->getFeature()) || preg_match('/感動詞/', $node->getFeature())) {
+                if (preg_match('/名詞/', $node->getFeature())) {
+                    $data[] = $node->getSurface();
+                }
+            }
+        } 
         if (!$data) return 1;
 
         $this->output
             ->set_content_type('application/json')
             ->set_output(json_encode($data));
-        /*
-        // mecab
-        $mecab = new Mecab_Tagger();
-        for($node=$mecab->parseToNode($first); $node; $node=$node->getNext()){
-            if($node->getStat() != 2 && $node->getStat() != 3){
-                print 'ID: '.$node->getId()."\n";
-                print 'Surface: '.$node->getSurface()."\n";
-                print 'Stat: '.$node->getStat()."\n";
-                print 'Length: '.$node->getLength()."\n";
-                print 'Feature: '.$node->getFeature()."\n";
-                print "\n";
-            }
-        } 
-        */
-
     }
 }

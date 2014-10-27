@@ -1,7 +1,6 @@
 <base href="<?= base_url(); ?>">
 
 <style>
-
 svg line {
     stroke: blue;
     stroke-width: 1;
@@ -28,8 +27,6 @@ div.set_center {
     text-align: center;
     margin: 0 auto;
 }
-
-
 </style>
 
 <body>
@@ -54,10 +51,14 @@ px | 円のサイズ
     <option value="12">12</option>
     <option value="13">13</option>
 </select>
-px
+px |
+<button onclick=changeSize()>全てのサイズ変更</button>
 </p>
 
-<button onclick=changeSize()>全てのサイズ変更</button>
+<p>
+<input type="radio" name="searchType" value="related" checked="checked">関連キーワード
+<input type="radio" name="searchType" value="analize">形態素解析
+</p>
 
 <div class="set_center"></div>
 
@@ -149,8 +150,7 @@ px
 
             $.ajax({
                 type: "POST",
-                // url: "<?= base_url(); ?>ajax/related",
-                url: "<?= base_url(); ?>ajax/happy",
+                url: getSearchType(),
                 data: {keyword: keyword},
                 dataType: "json",
 
@@ -233,6 +233,17 @@ px
             .attr("font-size", function(d){
                 return $("#font_size").val() + "px";  
             });
+    }
+
+    function getSearchType() {
+        var type = $("input[name='searchType']:checked");
+        var url;
+        if (type.val() == 'related') {
+            url = "<?= base_url(); ?>ajax/related";
+        } else if (type.val() == 'analize') {
+            url = "<?= base_url(); ?>ajax/happy";
+        }
+        return url;
     }
 </script>
 
