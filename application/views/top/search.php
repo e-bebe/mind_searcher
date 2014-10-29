@@ -27,32 +27,30 @@ div.set_center {
     text-align: center;
     margin: 0 auto;
 }
+
+div.search-type {
+    text-align: center;
+    margin: 0 auto;
+}
+
 </style>
 
 <body>
 
-<p>フォントサイズ
-<select id="font_size">
-    <option value="10">10</option>
-    <option value="15">15</option>
-    <option value="20">20</option>
-    <option value="25">25</option>
-    <option value="30">30</option>
-    <option value="35">35</option>
-    <option value="40">40</option>
-</select>
-px | 円のサイズ
-<select id="circle_size">
-    <option value="7">7</option>
-    <option value="8">8</option>
-    <option value="9">9</option>
-    <option value="10">10</option>
-    <option value="11">11</option>
-    <option value="12">12</option>
-    <option value="13">13</option>
-</select>
-px |
-<button onclick=changeSize()>全てのサイズ変更</button>
+<p> 文字の大きさ
+<button onClick="setSize('literal', 'minusLarge')"><<</button>
+<button onClick="setSize('literal', 'minus')"><</button>
+<span id="font_size">15</span>px
+<button onClick="setSize('literal', 'plus')">></button>
+<button onClick="setSize('literal', 'plusLarge')">>></button>
+</p>
+
+<p> ○の大きさ
+<button onClick="setSize('circle', 'minusLarge')"><<</button>
+<button onClick="setSize('circle', 'minus')"><</button>
+<span id="circle_size">10</span>px
+<button onClick="setSize('circle', 'plus')">></button>
+<button onClick="setSize('circle', 'plusLarge')">>></button>
 </p>
 
 <p>
@@ -127,7 +125,7 @@ px |
         node = node.data(list.nodes);
         node.enter().append("circle")
             .attr("r", function(d){
-                return $("#circle_size").val() + "px";
+                return $("#circle_size").text() + "px";
             })
         .classed("init", true)
         .on("click", function(d){
@@ -137,17 +135,25 @@ px |
                 .transition()
                 .duration(100)
                 .attr("r", function(d){
-                    return Number($("#circle_size").val()) + 2 + "px";
+                    return Number($("#circle_size").text()) + 2 + "px";
                 })
                 .transition()
                 .duration(200)
                 .attr("r", function(d){
-                    return $("#circle_size").val() + "px";
+                    return $("#circle_size").text() + "px";
                 })
                 .attr("stroke", "purple")
                 .attr("stroke-width", 2)
-                .attr("fill", "blue");
-
+                .attr("fill", function(d){
+                    var type = $("input[name='searchType']:checked");
+                    var color;
+                    if (type.val() == 'related') {
+                        color = "blue";
+                    } else if (type.val() == 'analize') {
+                        color = "red";
+                    }
+                    return color;
+                });
             $.ajax({
                 type: "POST",
                 url: getSearchType(),
@@ -169,7 +175,7 @@ px |
             .text(function(d) { return d.name; })
             .classed("init", true)
             .attr("font-size", function(d){
-                return $("#font_size").val() + "px";  
+                return $("#font_size").text() + "px";  
             })
             .style("fill", function(d, i){
                 return color(i);
@@ -180,14 +186,14 @@ px |
                     .attr("cursor", "default") 
                     .attr("font-weight", "bold") 
                     .attr("font-size", function(d){
-                        return Number($("#font_size").val()) + 2 + "px";
+                        return Number($("#font_size").text()) + 2 + "px";
                     });
             })
             .on("mouseout", function(d){
                 d3.select(this)
                     .classed("init", true)
                     .attr("font-size", function(d){
-                        return $("#font_size").val() + "px";
+                        return $("#font_size").text() + "px";
                     });
             })
             .on("click", function(d){
@@ -220,18 +226,72 @@ px |
         }
     }
 
-    function changeSize() {
+    function setSize(type, calc) {
+        var min = 1;
+        var max = 90;
+        if (type == 'literal') {
+            var font_size = $("#font_size").text();
+            var new_font_size;
+            switch (calc) {
+                case "minusLarge":
+                    new_font_size = parseInt(font_size, 10) - 5;
+                break;
+                case "minus":
+                    new_font_size = parseInt(font_size, 10) - 1;
+                break;
+                case "plus":
+                    new_font_size = parseInt(font_size, 10) + 1;
+                break;
+                case "plusLarge":
+                    new_font_size = parseInt(font_size, 10) + 5;
+                break;
+            }
+            if (new_font_size < min) {
+                new_font_size = min;
+            } else if (new_font_size > max) {
+                new_font_size = max;
+            }
+            $("#font_size").text(new_font_size);
+        } else if (type == 'circle') {
+            var circle_size = $("#circle_size").text();
+            var new_circle_size;
+            switch (calc) {
+                case "minusLarge":
+                    new_circle_size = parseInt(circle_size, 10) - 5;
+                break;
+                case "minus":
+                    new_circle_size = parseInt(circle_size, 10) - 1;
+                break;
+                case "plus":
+                    new_circle_size = parseInt(circle_size, 10) + 1;
+                break;
+                case "plusLarge":
+                    new_circle_size = parseInt(circle_size, 10) + 5;
+                break;
+            }
+            if (new_circle_size < min) {
+                new_circle_size = min;
+            } else if (new_circle_size > max) {
+                new_circle_size = max;
+            }
+            $("#circle_size").text(new_circle_size);
+        }
+        changeDrawSize();
+    }
+
+    // node, labelのデータを更新する
+    function changeDrawSize() {
         node.data(list.nodes)
             .transition()
             .duration(200)
             .attr("r", function(d){
-                return $("#circle_size").val() + "px";
+                return $("#circle_size").text() + "px";
             });
         label.data(list.nodes)
             .transition()
             .duration(200)
             .attr("font-size", function(d){
-                return $("#font_size").val() + "px";  
+                return $("#font_size").text() + "px";  
             });
     }
 
