@@ -28,9 +28,9 @@ div.set_center {
     margin: 0 auto;
 }
 
-div.search-type {
-    text-align: center;
-    margin: 0 auto;
+.overlay {
+    fill: none;
+    pointer-events: all;
 }
 
 </style>
@@ -39,7 +39,7 @@ div.search-type {
 
 <p> 文字の大きさ
 <button onClick="setSize('literal', 'minusLarge')"><<</button>
-<button onClick="setSize('literal', 'minus')"><</button>
+<button onClick="setSi0e('literal', 'minus')"><</button>
 <span id="font_size">15</span>px
 <button onClick="setSize('literal', 'plus')">></button>
 <button onClick="setSize('literal', 'plusLarge')">>></button>
@@ -81,7 +81,10 @@ div.search-type {
     var label_dist = 7;
 
     var svg = d3.select("div").append("svg")
-        .attr("width", w).attr("height", h);
+        .attr("width", w).attr("height", h)
+        .append("g")
+        .call(d3.behavior.zoom().scaleExtent([1, 8]).on("zoom", zoom))
+        .append("g");
     
     var force = d3.layout.force()
         .nodes(list.nodes)
@@ -92,11 +95,18 @@ div.search-type {
         .linkDistance(80)
         .on("tick", tick);
 
+    // drag @途中
     var link      = svg.selectAll("line").data(list.links);
     var node      = svg.selectAll("circle").data(list.nodes);
     var label     = svg.selectAll("text").data(list.nodes);
 
     var color = d3.scale.category10();  // 20色を指定
+
+    // ovarlay to drag and zoom background
+    svg.append("rect")
+        .attr("class", "overlay")
+        .attr("width", w)
+        .attr("height", h);
 
     restart();
 
@@ -304,6 +314,10 @@ div.search-type {
             url = "<?= base_url(); ?>ajax/happy";
         }
         return url;
+    }
+
+    function zoom() {
+        svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
     }
 </script>
 
