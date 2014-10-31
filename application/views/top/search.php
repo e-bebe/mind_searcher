@@ -29,7 +29,7 @@ div.set_center {
 }
 
 .overlay {
-    fill: none;
+    fill: WhiteSmoke;
     pointer-events: all;
 }
 
@@ -83,7 +83,7 @@ div.set_center {
     var svg = d3.select("div").append("svg")
         .attr("width", w).attr("height", h)
         .append("g")
-        .call(d3.behavior.zoom().scaleExtent([1, 8]).on("zoom", zoom))
+        .call(d3.behavior.zoom().scaleExtent([0, 8]).on("zoom", zoom))
         .append("g");
     
     var force = d3.layout.force()
@@ -105,8 +105,8 @@ div.set_center {
     // ovarlay to drag and zoom background
     svg.append("rect")
         .attr("class", "overlay")
-        .attr("width", w)
-        .attr("height", h);
+        .attr("width", 10000)
+        .attr("height", 10000)
 
     restart();
 
