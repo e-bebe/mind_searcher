@@ -1,8 +1,9 @@
 <base href="<?= base_url(); ?>">
+<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" media="all" />
 
 <style>
 svg line {
-    stroke: blue;
+    /*stroke: blue;*/
     stroke-width: 1;
 }
 
@@ -23,48 +24,86 @@ body {
     width: 100%;
 }
 
-div.set_center {
-    text-align: center;
-    margin: 0 auto;
-}
-
 .overlay {
     fill: WhiteSmoke;
     pointer-events: all;
+}
+
+div#container {
+    width: 100%;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+div#map {
+    float: left;
+}
+
+div#leftbar {
+    position: absolute;
+    left: 0;
+    margin-top: 10px;
+    margin-right: 40px;
+}
+
+div#rightbar {
+    position: absolute;
+    right: 0;
+    margin-top: 10px;
+    margin-right: 40px;
 }
 
 </style>
 
 <body>
 
-<p> 文字の大きさ
-<button onClick="setSize('literal', 'minusLarge')"><<</button>
-<button onClick="setSi0e('literal', 'minus')"><</button>
-<span id="font_size">15</span>px
-<button onClick="setSize('literal', 'plus')">></button>
-<button onClick="setSize('literal', 'plusLarge')">>></button>
-</p>
+<div id="container">
+    <div id="map"></div>
 
-<p> ○の大きさ
-<button onClick="setSize('circle', 'minusLarge')"><<</button>
-<button onClick="setSize('circle', 'minus')"><</button>
-<span id="circle_size">10</span>px
-<button onClick="setSize('circle', 'plus')">></button>
-<button onClick="setSize('circle', 'plusLarge')">>></button>
-</p>
+    <div id="leftbar">
+        <div class="well well-large">
+            <h5>別の言葉で検索する</h5>
+            <form  method="POST" action="top/search">
+                <input class="input-large search-query" type="text" name="trgt">
+                <input class="btn btn-mini btn-inverse" type="submit" name="btn1" value="search">
+            </form>
+        </div>
+    </div>
 
-<p>
-<input type="radio" name="searchType" value="related" checked="checked">関連キーワード
-<input type="radio" name="searchType" value="analize">形態素解析
-</p>
-
-<div class="set_center"></div>
+    <div id="rightbar">
+        <div class="well well-large">
+            <h5> 検索タイプ </h5>
+            <div class="btn-group searchType" data-toggle="buttons-radio">
+                <button type="button" class="btn btn-primary active" value="related">関連キーワード</button>
+                <button type="button" class="btn btn-danger" value="analize">形態素解析</button>
+            </div>
+        </div>
+        <div class="well well-large">
+            <h5>文字の大きさ </h5>
+            <button class="btn btn-warning" onClick="setSize('literal', 'minusLarge')"><<</button>
+            <button class="btn btn-info" onClick="setSize('literal', 'minus')"><</button>
+            <span id="font_size" class="badge badge-inverse">15</span>
+            <button  class="btn btn-info" onClick="setSize('literal', 'plus')">></button>
+            <button  class="btn btn-warning" onClick="setSize('literal', 'plusLarge')">>></button>
+        </div>
+        <div class="well well-large">
+            <h5> ○の大きさ </h5>
+            <button  class="btn btn-warning" onClick="setSize('circle', 'minusLarge')"><<</button>
+            <button  class="btn btn-info" onClick="setSize('circle', 'minus')"><</button>
+            <span id="circle_size" class="badge badge-inverse">10</span>
+            <button  class="btn btn-info" onClick="setSize('circle', 'plus')">></button>
+            <button  class="btn btn-warning" onClick="setSize('circle', 'plusLarge')">>></button>
+        </div>
+    </div>
+</div>
 
 <script type="text/javascript" src="js/jquery-2.1.0.min.js"></script>
 <script type="text/javascript" src="js/jquery-ui.min.js"></script>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
 <script src="http://d3js.org/d3.v3.min.js"></script>
 
 <script>
+    console.log($(".searchType > .active").val());
     // init
     var list = {
         nodes : [
@@ -80,7 +119,7 @@ div.set_center {
 
     var label_dist = 7;
 
-    var svg = d3.select("div").append("svg")
+    var svg = d3.select("#map").append("svg")
         .attr("width", w).attr("height", h)
         .append("g")
         .call(d3.behavior.zoom().scaleExtent([0, 8]).on("zoom", zoom))
@@ -95,7 +134,6 @@ div.set_center {
         .linkDistance(80)
         .on("tick", tick);
 
-    // drag @途中
     var link      = svg.selectAll("line").data(list.links);
     var node      = svg.selectAll("circle").data(list.nodes);
     var label     = svg.selectAll("text").data(list.nodes);
@@ -105,9 +143,9 @@ div.set_center {
     // ovarlay to drag and zoom background
     svg.append("rect")
         .attr("class", "overlay")
-        .attr("width", 5000)
-        .attr("height", 5000)
-        .attr("transform", "translate(-1500, -2000)") // move criteria
+        .attr("width", 10000)
+        .attr("height", 10000)
+        .attr("transform", "translate(-4000, -4000)") // move criteria
 
     restart();
 
@@ -130,7 +168,7 @@ div.set_center {
     function restart() {
         // update link
         link = link.data(list.links);
-        link.enter().append("line");
+        link.enter().append("line").attr("stroke", getStrokeColor());
 
         // update node
         node = node.data(list.nodes);
@@ -156,7 +194,7 @@ div.set_center {
                 .attr("stroke", "purple")
                 .attr("stroke-width", 2)
                 .attr("fill", function(d){
-                    var type = $("input[name='searchType']:checked");
+                    var type = $(".searchType > .active");
                     var color;
                     if (type.val() == 'related') {
                         color = "blue";
@@ -307,7 +345,7 @@ div.set_center {
     }
 
     function getSearchType() {
-        var type = $("input[name='searchType']:checked");
+        var type = $(".searchType > .active");
         var url;
         if (type.val() == 'related') {
             url = "<?= base_url(); ?>ajax/related";
@@ -315,6 +353,17 @@ div.set_center {
             url = "<?= base_url(); ?>ajax/happy";
         }
         return url;
+    }
+
+    function getStrokeColor() {
+        var type = $(".searchType > .active");
+        var color;
+        if (type.val() == 'related') {
+            color = "blue";
+        } else if (type.val() == 'analize') {
+            color = "red";
+        }
+        return color;
     }
 
     function zoom() {
