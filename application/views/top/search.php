@@ -105,8 +105,9 @@ div.set_center {
     // ovarlay to drag and zoom background
     svg.append("rect")
         .attr("class", "overlay")
-        .attr("width", 10000)
-        .attr("height", 10000)
+        .attr("width", 5000)
+        .attr("height", 5000)
+        .attr("transform", "translate(-1500, -2000)") // move criteria
 
     restart();
 
