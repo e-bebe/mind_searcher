@@ -53,10 +53,16 @@ div#rightbar {
     margin-right: 40px;
 }
 
+span#tag {
+    text-align: center;
+
+}
+
 </style>
 
 <body>
 
+<div id="fb-root"></div>
 <div id="container">
     <div id="map"></div>
 
@@ -67,6 +73,10 @@ div#rightbar {
                 <input class="input-large search-query" type="text" name="trgt">
                 <input class="btn btn-mini btn-inverse" type="submit" name="btn1" value="search">
             </form>
+            <span id="tag">
+                <div class="fb-like" data-href="http://yokkora.info/mind_searcher/top" data-layout="button_count" data-action="like" data-show-faces="false" data-share="false" data-colorscheme="dark"></div>
+                <a href="https://twitter.com/share" class="twitter-share-button" data-text="キーワード検索" data-lang="ja">ツイート</a>
+            </span>
         </div>
     </div>
 
@@ -101,8 +111,28 @@ div#rightbar {
 <script type="text/javascript" src="js/jquery-ui.min.js"></script>
 <script type="text/javascript" src="js/bootstrap.min.js"></script>
 <script src="http://d3js.org/d3.v3.min.js"></script>
+<script type="text/javascript" src="js/Stats.js"></script>
 
 <script>
+
+    var stats = new Stats();
+    stats.setMode(1);
+
+    stats.domElement.style.position = 'absolute';
+    stats.domElement.style.left = '0px';
+    stats.domElement.style.top = '0px';
+
+    document.body.appendChild(stats.domElement);
+
+    var update = function() {
+        stats.begin();
+        restart();
+        stats.end();
+        requestAnimationFrame(update);
+    };
+
+    requestAnimationFrame(update);
+
     // init
     var list = {
         nodes : [
@@ -369,5 +399,15 @@ div#rightbar {
         svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
     }
 </script>
+
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/sdk.js#xfbml=1&appId=506463786045217&version=v2.0";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 
 </body>
